@@ -1,0 +1,41 @@
+<footer class="fp-footer">
+  <div class="container">
+    <div class="row gy-4 align-items-start justify-content-between">
+      <div class="col-lg-5">
+        <a href="{{ url_for('main.index') }}" class="fp-brand d-inline-block mb-2">{{ site_name }}</a>
+        <p class="text-muted small mb-0" style="max-width: 42ch;">
+          An independent editorial publishing platform built with Flask, SQLAlchemy, Bootstrap 5, and Quill.js for thoughtful long-form writing.
+        </p>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-3">
+        <p class="fw-semibold small mb-2 text-dark">Navigation</p>
+        <ul class="list-unstyled small d-flex flex-column gap-1 mb-0">
+          <li><a href="{{ url_for('main.index') }}" class="text-decoration-none text-muted">Journal</a></li>
+          <li><a href="{{ url_for('main.about') }}" class="text-decoration-none text-muted">About</a></li>
+          {% if current_user.is_authenticated %}
+          <li><a href="{{ url_for('posts.create') }}" class="text-decoration-none text-muted">Write an Article</a></li>
+          <li><a href="{{ url_for('posts.dashboard') }}" class="text-decoration-none text-muted">Author Dashboard</a></li>
+          {% else %}
+          <li><a href="{{ url_for('auth.login') }}" class="text-decoration-none text-muted">Sign In</a></li>
+          <li><a href="{{ url_for('auth.register') }}" class="text-decoration-none text-muted">Create Account</a></li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-3 text-lg-end">
+        <p class="fw-semibold small mb-2 text-dark">Archive &amp; Export</p>
+        <p class="small text-muted mb-2">&copy; {{ current_year }} {{ site_name }}.</p>
+        {% if enable_zip_download %}
+        <a
+          href="/download/flask-blog-management-system.zip"
+          download="flask-blog-management-system.zip"
+          class="btn btn-fp-outline btn-sm"
+        >
+          <i class="bi bi-file-earmark-zip me-1"></i>Download Project ZIP
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</footer>

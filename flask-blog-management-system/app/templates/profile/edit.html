@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile — {{ site_name }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <h1 class="font-serif h2 mb-0">Edit Profile</h1>
+          <a href="{{ url_for('profile.view', username=current_user.username) }}" class="btn btn-fp-outline btn-sm">
+            Back to Profile
+          </a>
+        </div>
+
+        <div class="fp-panel p-4 p-sm-5">
+          <form method="post" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="mb-3">
+              {{ form.full_name.label(class="form-label small fw-semibold") }}
+              {{ form.full_name(class="form-control" + (" is-invalid" if form.full_name.errors else "")) }}
+              {% for error in form.full_name.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              {{ form.bio.label(class="form-label small fw-semibold") }}
+              {{ form.bio(
+                class="form-control" + (" is-invalid" if form.bio.errors else ""),
+                rows="3",
+                placeholder="Tell readers a little about your work and interests..."
+              ) }}
+              {% for error in form.bio.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              {{ form.location.label(class="form-label small fw-semibold") }}
+              {{ form.location(
+                class="form-control" + (" is-invalid" if form.location.errors else ""),
+                placeholder="City, Country"
+              ) }}
+              {% for error in form.location.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-4">
+              {{ form.website.label(class="form-label small fw-semibold") }}
+              {{ form.website(
+                class="form-control" + (" is-invalid" if form.website.errors else ""),
+                placeholder="https://example.com"
+              ) }}
+              {% for error in form.website.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+              <a href="{{ url_for('profile.view', username=current_user.username) }}" class="btn btn-fp-outline">Cancel</a>
+              {{ form.submit(class="btn btn-fp-primary") }}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

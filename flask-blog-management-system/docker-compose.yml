@@ -1,0 +1,20 @@
+services:
+  web:
+    build: .
+    container_name: foliopress-blog
+    ports:
+      - "8000:8000"
+    environment:
+      FLASK_APP: run.py
+      FLASK_CONFIG: production
+      SECRET_KEY: ${SECRET_KEY:-change-this-secret-key-before-deploying}
+      DATABASE_URL: sqlite:////app/instance/blog_prod.db
+      AUTO_SEED: "true"
+    volumes:
+      - blog_instance:/app/instance
+      - blog_uploads:/app/app/static/uploads
+    restart: unless-stopped
+
+volumes:
+  blog_instance:
+  blog_uploads:

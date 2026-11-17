@@ -1,0 +1,14 @@
+[
+  "tests/test_auth.py::test_login_logout_and_protected_route",
+  "tests/test_auth.py::test_registration_rejects_duplicate_email_and_username",
+  "tests/test_auth.py::test_user_registration_success",
+  "tests/test_comments.py::test_comment_create_edit_delete_and_authorization",
+  "tests/test_models.py::test_post_cascade_deletes_comments",
+  "tests/test_models.py::test_post_tags_relationship_and_reading_time",
+  "tests/test_models.py::test_user_password_hashing_and_initials",
+  "tests/test_posts.py::test_create_read_edit_delete_post_with_image",
+  "tests/test_posts.py::test_post_edit_delete_authorization",
+  "tests/test_posts.py::test_user_profile_page_displays_author_posts",
+  "tests/test_search_pagination.py::test_pagination_displays_six_posts_per_page",
+  "tests/test_search_pagination.py::test_search_and_category_and_tag_filtering"
+]

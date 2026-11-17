@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block title %}{{ site_name }} — Essays on Engineering, Architecture &amp; Craft{% endblock %}
+
+{% block content %}
+<section class="fp-masthead">
+  <div class="container">
+    <div class="row align-items-end gy-4">
+      <div class="col-lg-8">
+        <p class="small text-muted mb-2">Independent Publishing &amp; Technical Essays</p>
+        <h1 class="fp-display-title mb-3">
+          Thoughtful writing on software craft, architecture, and civic design.
+        </h1>
+        <p class="fp-lead mb-0">
+          Explore long-form articles, studio notes, and architectural studies contributed by engineers, designers, and researchers.
+        </p>
+      </div>
+      <div class="col-lg-4 text-lg-end">
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('posts.create') }}" class="btn btn-fp-primary">
+            <i class="bi bi-pencil-square me-2"></i>Publish New Article
+          </a>
+        {% else %}
+          <a href="{{ url_for('auth.register') }}" class="btn btn-fp-primary">
+            Start Writing on {{ site_name }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Search & Category Filter Bar -->
+    <div class="fp-filter-bar mt-4">
+      <form method="get" action="{{ url_for('main.index') }}" class="row g-2 align-items-center">
+        {% if selected_tag %}
+          <input type="hidden" name="tag" value="{{ selected_tag }}" />
+        {% endif %}
+
+        <div class="col-md-5">
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0 text-muted">
+              <i class="bi bi-search"></i>
+            </span>
+            <input
+              type="search"
+              name="q"
+              value="{{ search_query }}"
+              class="form-control border-start-0 ps-0"
+              placeholder="Search articles by title or content..."
+              aria-label="Search articles"
+            />
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <select name="category" class="form-select" aria-label="Filter by category">
+            <option value="">All Categories</option>
+            {% for cat, count in categories_with_counts %}
+              <option value="{{ cat.slug }}" {% if selected_category == cat.slug %}selected{% endif %}>
+                {{ cat.name }} ({{ count }})
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-md-3 d-flex gap-2">
+          <button type="submit" class="btn btn-fp-primary flex-grow-1">Search</button>
+          {% if has_active_filters %}
+            <a href="{{ url_for('main.index') }}" class="btn btn-fp-outline" title="Clear all filters">
+              Clear
+            </a>
+          {% endif %}
+        </div>
+      </form>
+
+      <!-- Quick Category Filter Tabs -->
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mt-3 pt-3 border-top">
+        <div class="fp-filter-tabs" role="navigation" aria-label="Category filters">
+          <a
+            href="{{ url_for('main.index', q=search_query or None, tag=selected_tag or None) }}"
+            class="fp-filter-tab {% if not selected_category %}active{% endif %}"
+          >
+            All
+          </a>
+          {% for cat, count in categories_with_counts %}
+            <a
+              href="{{ url_for('main.index', category=cat.slug, q=search_query or None, tag=selected_tag or None) }}"
+              class="fp-filter-tab {% if selected_category == cat.slug %}active{% endif %}"
+            >
+              {{ cat.name }}
+              <span class="opacity-75 tabular-nums">{{ count }}</span>
+            </a>
+          {% endfor %}
+        </div>
+
+        {% if popular_tags %}
+          <div class="d-flex flex-wrap align-items-center gap-2 small">
+            <span class="text-muted">Topics:</span>
+            {% for tag in popular_tags[:6] %}
+              <a
+                href="{{ url_for('main.index', tag=tag.slug, q=search_query or None, category=selected_category or None) }}"
+                class="fp-tag-link {% if selected_tag == tag.slug %}active fw-semibold{% endif %}"
+              >
+                #{{ tag.name }}
+              </a>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    {% if has_active_filters %}
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4 pb-3 border-bottom">
+        <p class="mb-0 text-muted small tabular-nums">
+          Found <strong>{{ pagination.total }}</strong> {{ 'article' if pagination.total == 1 else 'articles' }}
+          {% if search_query %}matching &ldquo;<strong>{{ search_query }}</strong>&rdquo;{% endif %}
+          {% if active_category %}in <strong>{{ active_category.name }}</strong>{% endif %}
+          {% if active_tag %}tagged <strong>#{{ active_tag.name }}</strong>{% endif %}
+        </p>
+        <a href="{{ url_for('main.index') }}" class="small text-decoration-none fw-medium">
+          <i class="bi bi-x-circle me-1"></i>Clear active filters
+        </a>
+      </div>
+    {% endif %}
+
+    {% if posts %}
+      {# Highlight first article as Lead Story on unfiltered Page 1 #}
+      {% if not has_active_filters and pagination.page == 1 %}
+        {% set lead_post = posts[0] %}
+        {% set remaining_posts = posts[1:] %}
+
+        <article class="fp-featured-card mb-5">
+          <div class="row g-0 align-items-stretch">
+            <div class="col-lg-6">
+              <a href="{{ url_for('posts.detail', slug=lead_post.slug) }}" class="fp-featured-media d-block text-decoration-none">
+                {% if lead_post.image_url %}
+                  <img
+                    src="{{ lead_post.image_url }}"
+                    alt="{{ lead_post.title }}"
+                    onerror="this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none');"
+                  />
+                  <div class="fp-image-fallback d-none" style="min-height: 340px;">
+                    <i class="bi bi-journal-richtext fs-1 mb-2"></i>
+                    <span class="small">{{ lead_post.category.name if lead_post.category else 'Featured' }}</span>
+                  </div>
+                {% else %}
+                  <div class="fp-image-fallback" style="min-height: 340px;">
+                    <i class="bi bi-journal-richtext fs-1 mb-2"></i>
+                    <span class="small">{{ lead_post.category.name if lead_post.category else 'Featured' }}</span>
+                  </div>
+                {% endif %}
+              </a>
+            </div>
+            <div class="col-lg-6 p-4 p-lg-5 d-flex flex-column justify-content-center">
+              <div class="fp-meta-line mb-3 tabular-nums">
+                {% if lead_post.category %}
+                  <a href="{{ url_for('main.index', category=lead_post.category.slug) }}" class="fp-meta-category">
+                    {{ lead_post.category.name }}
+                  </a>
+                  <span aria-hidden="true">&middot;</span>
+                {% endif %}
+                <span>Featured</span>
+                <span aria-hidden="true">&middot;</span>
+                <span>{{ lead_post.created_at | format_date }}</span>
+                <span aria-hidden="true">&middot;</span>
+                <span>{{ lead_post.reading_time }} min read</span>
+              </div>
+
+              <h2 class="font-serif fw-semibold mb-3" style="font-size: clamp(1.6rem, 2.5vw, 2.2rem); line-height: 1.2;">
+                <a href="{{ url_for('posts.detail', slug=lead_post.slug) }}" class="text-decoration-none text-dark">
+                  {{ lead_post.title }}
+                </a>
+              </h2>
+
+              <p class="text-muted mb-4" style="font-size: 1.02rem; line-height: 1.65;">
+                {{ lead_post.description }}
+              </p>
+
+              <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 pt-3 border-top">
+                <a
+                  href="{{ url_for('profile.view', username=lead_post.author.username) }}"
+                  class="d-inline-flex align-items-center gap-2 text-decoration-none text-dark"
+                >
+                  <span class="fp-avatar">{{ lead_post.author.initials }}</span>
+                  <div>
+                    <div class="small fw-semibold">{{ lead_post.author.full_name }}</div>
+                    <div class="small text-muted" style="font-size: 0.78rem;">@{{ lead_post.author.username }}</div>
+                  </div>
+                </a>
+                <a href="{{ url_for('posts.detail', slug=lead_post.slug) }}" class="btn btn-fp-outline btn-sm">
+                  Read Article <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        {% if remaining_posts %}
+          <div class="row g-4">
+            {% for post in remaining_posts %}
+              <div class="col-md-6 col-lg-4">
+                {% include "components/_post_card.html" %}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="row g-4">
+          {% for post in posts %}
+            <div class="col-md-6 col-lg-4">
+              {% include "components/_post_card.html" %}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% set pagination_endpoint = 'main.index' %}
+      {% set pagination_args = {'q': search_query or None, 'category': selected_category or None, 'tag': selected_tag or None} %}
+      {% include "components/_pagination.html" %}
+    {% else %}
+      <div class="fp-panel text-center py-5">
+        <i class="bi bi-journal-x fs-1 text-muted d-block mb-3"></i>
+        <h2 class="font-serif h4 mb-2">No articles found</h2>
+        <p class="text-muted mb-4 mx-auto" style="max-width: 44ch;">
+          {% if has_active_filters %}
+            No published posts matched your current search or filter criteria. Try broadening your query or resetting filters.
+          {% else %}
+            No articles have been published yet. Be the first to contribute an essay.
+          {% endif %}
+        </p>
+        {% if has_active_filters %}
+          <a href="{{ url_for('main.index') }}" class="btn btn-fp-primary">Reset Filters</a>
+        {% elif current_user.is_authenticated %}
+          <a href="{{ url_for('posts.create') }}" class="btn btn-fp-primary">Write the First Post</a>
+        {% else %}
+          <a href="{{ url_for('auth.register') }}" class="btn btn-fp-primary">Create an Account</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

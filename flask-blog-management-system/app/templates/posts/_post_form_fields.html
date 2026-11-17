@@ -1,0 +1,94 @@
+{{ form.hidden_tag() }}
+
+<div class="mb-3">
+  {{ form.title.label(class="form-label small fw-semibold") }}
+  {{ form.title(
+    class="form-control form-control-lg font-serif" + (" is-invalid" if form.title.errors else ""),
+    placeholder="Enter a compelling article headline..."
+  ) }}
+  {% for error in form.title.errors %}
+    <div class="invalid-feedback">{{ error }}</div>
+  {% endfor %}
+</div>
+
+<div class="mb-3">
+  {{ form.description.label(class="form-label small fw-semibold") }}
+  {{ form.description(
+    class="form-control" + (" is-invalid" if form.description.errors else ""),
+    rows="2",
+    placeholder="A concise 1–2 sentence summary displayed on article cards..."
+  ) }}
+  {% for error in form.description.errors %}
+    <div class="invalid-feedback">{{ error }}</div>
+  {% endfor %}
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-6">
+    {{ form.category_id.label(class="form-label small fw-semibold") }}
+    {{ form.category_id(class="form-select" + (" is-invalid" if form.category_id.errors else "")) }}
+    {% for error in form.category_id.errors %}
+      <div class="invalid-feedback">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <div class="col-md-6">
+    {{ form.tags.label(class="form-label small fw-semibold") }}
+    {{ form.tags(
+      class="form-control" + (" is-invalid" if form.tags.errors else ""),
+      placeholder="e.g., Flask, Python, Architecture"
+    ) }}
+    <div class="form-text">Separate multiple tags with commas.</div>
+    {% for error in form.tags.errors %}
+      <div class="invalid-feedback">{{ error }}</div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="mb-4">
+  <label class="form-label small fw-semibold" for="quill-editor">Article Content</label>
+  <div class="fp-quill-wrapper">
+    <div id="quill-editor"></div>
+  </div>
+  {{ form.content(class="d-none", id="content") }}
+  {% for error in form.content.errors %}
+    <div class="text-danger small mt-1">{{ error }}</div>
+  {% endfor %}
+</div>
+
+<div class="mb-4">
+  {{ form.featured_image.label(class="form-label small fw-semibold") }}
+  {{ form.featured_image(
+    class="form-control" + (" is-invalid" if form.featured_image.errors else ""),
+    accept="image/*"
+  ) }}
+  <div class="form-text">Supported formats: JPG, PNG, WEBP, GIF (max 5 MB).</div>
+  {% for error in form.featured_image.errors %}
+    <div class="invalid-feedback">{{ error }}</div>
+  {% endfor %}
+
+  <div
+    id="image-preview-container"
+    class="mt-3 {% if not (post is defined and post and post.image_url) %}d-none{% endif %}"
+  >
+    <img
+      id="image-preview-el"
+      src="{{ post.image_url if (post is defined and post and post.image_url) else '' }}"
+      alt="Featured image preview"
+      class="rounded border"
+      style="max-height: 220px; width: auto; object-fit: cover;"
+    />
+  </div>
+
+  {% if post is defined and post and post.featured_image %}
+    <div class="form-check mt-2">
+      {{ form.remove_image(class="form-check-input") }}
+      {{ form.remove_image.label(class="form-check-label small text-muted") }}
+    </div>
+  {% endif %}
+</div>
+
+<div class="form-check form-switch mb-4">
+  {{ form.is_published(class="form-check-input") }}
+  {{ form.is_published.label(class="form-check-label small fw-medium") }}
+</div>

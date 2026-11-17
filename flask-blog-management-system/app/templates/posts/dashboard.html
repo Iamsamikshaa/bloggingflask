@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Author Dashboard — {{ site_name }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+      <div>
+        <h1 class="font-serif h2 mb-1">Author Dashboard</h1>
+        <p class="text-muted small mb-0">Manage your published articles, drafts, and reader engagement.</p>
+      </div>
+      <div class="d-flex gap-2">
+        <a href="{{ url_for('profile.view', username=current_user.username) }}" class="btn btn-fp-outline">
+          Public Profile
+        </a>
+        <a href="{{ url_for('posts.create') }}" class="btn btn-fp-primary">
+          <i class="bi bi-pencil-square me-1"></i>New Article
+        </a>
+      </div>
+    </div>
+
+    <!-- Summary Metrics Row -->
+    <div class="row g-3 mb-4 tabular-nums">
+      <div class="col-sm-4">
+        <div class="fp-panel p-4">
+          <p class="small text-muted mb-1">Published Articles</p>
+          <div class="font-serif fs-2 fw-semibold">{{ published_count }}</div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="fp-panel p-4">
+          <p class="small text-muted mb-1">Drafts</p>
+          <div class="font-serif fs-2 fw-semibold">{{ draft_count }}</div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="fp-panel p-4">
+          <p class="small text-muted mb-1">Comments Received</p>
+          <div class="font-serif fs-2 fw-semibold">{{ total_comments }}</div>
+        </div>
+      </div>
+    </div>
+
+    {% if posts %}
+      <div class="fp-panel p-0 overflow-hidden">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr class="small text-muted">
+                <th class="ps-4 py-3 fw-semibold">Article</th>
+                <th class="py-3 fw-semibold">Category</th>
+                <th class="py-3 fw-semibold">Status</th>
+                <th class="py-3 fw-semibold tabular-nums">Comments</th>
+                <th class="py-3 fw-semibold tabular-nums">Updated</th>
+                <th class="pe-4 py-3 text-end fw-semibold">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for post in posts %}
+                <tr>
+                  <td class="ps-4 py-3">
+                    <a href="{{ url_for('posts.detail', slug=post.slug) }}" class="fw-semibold text-decoration-none text-dark d-block">
+                      {{ post.title }}
+                    </a>
+                    <span class="small text-muted text-truncate d-inline-block" style="max-width: 340px;">
+                      {{ post.description }}
+                    </span>
+                  </td>
+                  <td class="py-3 small text-muted">
+                    {{ post.category.name if post.category else 'Uncategorized' }}
+                  </td>
+                  <td class="py-3 small">
+                    {% if post.is_published %}
+                      <span class="text-success fw-medium">
+                        <i class="bi bi-check-circle me-1"></i>Published
+                      </span>
+                    {% else %}
+                      <span class="text-secondary fw-medium">
+                        <i class="bi bi-file-earmark me-1"></i>Draft
+                      </span>
+                    {% endif %}
+                  </td>
+                  <td class="py-3 small tabular-nums">{{ post.comments | length }}</td>
+                  <td class="py-3 small text-muted tabular-nums">{{ post.updated_at | format_date }}</td>
+                  <td class="pe-4 py-3 text-end text-nowrap">
+                    <a href="{{ url_for('posts.edit', post_id=post.id) }}" class="btn btn-fp-outline btn-sm me-1">
+                      Edit
+                    </a>
+                    <form
+                      method="post"
+                      action="{{ url_for('posts.delete', post_id=post.id) }}"
+                      class="d-inline m-0"
+                      onsubmit="return confirm('Delete this post permanently?');"
+                    >
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                      <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    {% else %}
+      <div class="fp-panel text-center py-5">
+        <i class="bi bi-journal-plus fs-1 text-muted d-block mb-3"></i>
+        <h2 class="font-serif h4 mb-2">You have not written any articles yet</h2>
+        <p class="text-muted mb-4">Start your first essay or engineering note with the rich text editor.</p>
+        <a href="{{ url_for('posts.create') }}" class="btn btn-fp-primary">Write Your First Article</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

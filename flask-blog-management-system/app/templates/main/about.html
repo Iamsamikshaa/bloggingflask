@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}About {{ site_name }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <p class="small text-muted mb-2">Publication Overview</p>
+        <h1 class="fp-display-title mb-4">About {{ site_name }}</h1>
+        <p class="lead text-muted mb-4">
+          {{ site_name }} is a full-stack editorial blog management platform built with Flask, Flask-SQLAlchemy, Flask-Login, WTForms, Bootstrap 5, and Quill.js.
+        </p>
+
+        <div class="row g-3 mb-5 tabular-nums">
+          <div class="col-sm-4">
+            <div class="fp-panel p-4 text-center">
+              <div class="font-serif fs-2 fw-semibold text-dark">{{ total_posts }}</div>
+              <div class="small text-muted">Published Articles</div>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="fp-panel p-4 text-center">
+              <div class="font-serif fs-2 fw-semibold text-dark">{{ total_categories }}</div>
+              <div class="small text-muted">Editorial Categories</div>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="fp-panel p-4 text-center">
+              <div class="font-serif fs-2 fw-semibold text-dark">{{ total_tags }}</div>
+              <div class="small text-muted">Topic Tags</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fp-panel">
+          <h2 class="font-serif h4 mb-3">Platform Capabilities</h2>
+          <ul class="mb-0 text-muted d-flex flex-column gap-2">
+            <li>Modular Flask Blueprint architecture with separate development, testing, and production configs.</li>
+            <li>Secure account registration, Werkzeug password hashing, and Flask-Login session protection.</li>
+            <li>Rich-text authoring powered by Quill.js with server-side HTML sanitization and featured image uploads.</li>
+            <li>Categorized and tagged articles with full-text search, combined filtering, and 6-per-page pagination.</li>
+            <li>Interactive reader comments with strict author ownership verification on edit and delete actions.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

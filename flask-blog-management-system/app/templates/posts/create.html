@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Write New Article — {{ site_name }}{% endblock %}
+
+{% block head_extra %}
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-9">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <div>
+            <h1 class="font-serif h2 mb-1">Write a new article</h1>
+            <p class="text-muted small mb-0">Craft and publish a story to {{ site_name }}.</p>
+          </div>
+          <a href="{{ url_for('posts.dashboard') }}" class="btn btn-fp-outline btn-sm">Back to Dashboard</a>
+        </div>
+
+        <div class="fp-panel p-4 p-sm-5">
+          <form id="post-editor-form" method="post" enctype="multipart/form-data" novalidate>
+            {% include "posts/_post_form_fields.html" %}
+
+            <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+              <a href="{{ url_for('main.index') }}" class="btn btn-fp-outline">Cancel</a>
+              <button type="submit" class="btn btn-fp-primary">Publish Article</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts_extra %}
+  <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+  <script src="{{ url_for('static', filename='js/editor.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}{{ profile_user.full_name }} (@{{ profile_user.username }}) — {{ site_name }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <!-- Profile Header Card -->
+    <div class="fp-panel p-4 p-sm-5 mb-5">
+      <div class="row align-items-center gy-4">
+        <div class="col-lg-8">
+          <div class="d-flex flex-column flex-sm-row align-items-sm-start gap-4">
+            <span class="fp-avatar fp-avatar-lg">{{ profile_user.initials }}</span>
+            <div>
+              <h1 class="font-serif h2 mb-1">{{ profile_user.full_name }}</h1>
+              <p class="text-muted small mb-2">
+                @{{ profile_user.username }}
+                <span aria-hidden="true">&middot;</span>
+                Joined {{ profile_user.created_at | format_date('%B %Y') }}
+                {% if profile_user.location %}
+                  <span aria-hidden="true">&middot;</span>
+                  <span>{{ profile_user.location }}</span>
+                {% endif %}
+              </p>
+
+              {% if profile_user.bio %}
+                <p class="text-dark mb-3" style="max-width: 60ch;">{{ profile_user.bio }}</p>
+              {% else %}
+                <p class="text-muted small mb-3">Author and contributor on {{ site_name }}.</p>
+              {% endif %}
+
+              <div class="d-flex flex-wrap align-items-center gap-4 small text-muted tabular-nums">
+                <span><strong>{{ pagination.total }}</strong> Published {{ 'Article' if pagination.total == 1 else 'Articles' }}</span>
+                <span><strong>{{ total_comments_written }}</strong> {{ 'Comment' if total_comments_written == 1 else 'Comments' }} Written</span>
+                {% if profile_user.website %}
+                  <a href="{{ profile_user.website }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
+                    <i class="bi bi-link-45deg me-1"></i>Website
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 text-lg-end">
+          {% if current_user.is_authenticated and current_user.id == profile_user.id %}
+            <div class="d-inline-flex flex-wrap gap-2">
+              <a href="{{ url_for('profile.edit') }}" class="btn btn-fp-outline btn-sm">
+                <i class="bi bi-sliders me-1"></i>Edit Profile
+              </a>
+              <a href="{{ url_for('posts.create') }}" class="btn btn-fp-primary btn-sm">
+                <i class="bi bi-pencil-square me-1"></i>New Article
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- User's Published Articles -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+      <h2 class="font-serif h3 mb-0">Published Articles by {{ profile_user.full_name }}</h2>
+    </div>
+
+    {% if posts %}
+      <div class="row g-4">
+        {% for post in posts %}
+          <div class="col-md-6 col-lg-4">
+            {% include "components/_post_card.html" %}
+          </div>
+        {% endfor %}
+      </div>
+
+      {% set pagination_endpoint = 'profile.view' %}
+      {% set pagination_args = {'username': profile_user.username} %}
+      {% include "components/_pagination.html" %}
+    {% else %}
+      <div class="fp-panel text-center py-5">
+        <p class="text-muted mb-3">No published articles yet.</p>
+        {% if current_user.is_authenticated and current_user.id == profile_user.id %}
+          <a href="{{ url_for('posts.create') }}" class="btn btn-fp-primary btn-sm">Write Your First Article</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

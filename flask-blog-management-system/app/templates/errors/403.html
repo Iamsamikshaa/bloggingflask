@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}403 Forbidden — {{ site_name }}{% endblock %}
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <div class="fp-panel text-center py-5 mx-auto" style="max-width: 560px;">
+      <p class="small text-muted mb-2 tabular-nums">Error 403</p>
+      <h1 class="font-serif h2 mb-3">Access Denied</h1>
+      <p class="text-muted mb-4">You do not have permission to modify or delete content owned by another author.</p>
+      <a href="{{ url_for('main.index') }}" class="btn btn-fp-primary">Return to Journal</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

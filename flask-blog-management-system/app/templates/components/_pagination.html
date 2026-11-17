@@ -1,0 +1,58 @@
+{% if pagination.pages > 1 %}
+<nav aria-label="Posts pagination" class="mt-5 d-flex flex-column flex-sm-row align-items-center justify-content-between gap-3">
+  <p class="small text-muted mb-0 tabular-nums">
+    Showing page <strong>{{ pagination.page }}</strong> of <strong>{{ pagination.pages }}</strong>
+    ({{ pagination.total }} {{ 'post' if pagination.total == 1 else 'posts' }})
+  </p>
+
+  <ul class="pagination fp-pagination mb-0 tabular-nums">
+    <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+      {% if pagination.has_prev %}
+        <a
+          class="page-link"
+          href="{{ url_for(pagination_endpoint, page=pagination.prev_num, **(pagination_args or {})) }}"
+          aria-label="Previous page"
+        >
+          <i class="bi bi-arrow-left me-1"></i>Previous
+        </a>
+      {% else %}
+        <span class="page-link" aria-disabled="true">
+          <i class="bi bi-arrow-left me-1"></i>Previous
+        </span>
+      {% endif %}
+    </li>
+
+    {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+      {% if page_num %}
+        <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
+          <a
+            class="page-link"
+            href="{{ url_for(pagination_endpoint, page=page_num, **(pagination_args or {})) }}"
+            {% if page_num == pagination.page %}aria-current="page"{% endif %}
+          >
+            {{ page_num }}
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
+      {% endif %}
+    {% endfor %}
+
+    <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+      {% if pagination.has_next %}
+        <a
+          class="page-link"
+          href="{{ url_for(pagination_endpoint, page=pagination.next_num, **(pagination_args or {})) }}"
+          aria-label="Next page"
+        >
+          Next<i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      {% else %}
+        <span class="page-link" aria-disabled="true">
+          Next<i class="bi bi-arrow-right ms-1"></i>
+        </span>
+      {% endif %}
+    </li>
+  </ul>
+</nav>
+{% endif %}

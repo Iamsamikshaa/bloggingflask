@@ -1,0 +1,8 @@
+{
+  "name": "FolioPress — Flask Blog Management System",
+  "description": "A complete, production-ready editorial Blog Management System built with Python Flask, SQLAlchemy, Flask-Login, Bootstrap 5, Quill.js, Pytest, Gunicorn, and Docker.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

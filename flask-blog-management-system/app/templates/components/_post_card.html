@@ -1,0 +1,62 @@
+<article class="fp-card">
+  <a href="{{ url_for('posts.detail', slug=post.slug) }}" class="fp-card-media d-block text-decoration-none">
+    {% if post.image_url %}
+      <img
+        src="{{ post.image_url }}"
+        alt="{{ post.title }}"
+        loading="lazy"
+        onerror="this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none');"
+      />
+      <div class="fp-image-fallback d-none">
+        <i class="bi bi-journal-richtext fs-2 mb-2"></i>
+        <span class="small fw-medium">{{ post.category.name if post.category else 'Article' }}</span>
+      </div>
+    {% else %}
+      <div class="fp-image-fallback">
+        <i class="bi bi-journal-richtext fs-2 mb-2"></i>
+        <span class="small fw-medium">{{ post.category.name if post.category else 'Article' }}</span>
+      </div>
+    {% endif %}
+  </a>
+
+  <div class="p-4 d-flex flex-column flex-grow-1">
+    <div class="fp-meta-line mb-2 tabular-nums">
+      {% if post.category %}
+        <a href="{{ url_for('main.index', category=post.category.slug) }}" class="fp-meta-category">
+          {{ post.category.name }}
+        </a>
+        <span aria-hidden="true">&middot;</span>
+      {% endif %}
+      <span>{{ post.created_at | format_date }}</span>
+      <span aria-hidden="true">&middot;</span>
+      <span>{{ post.reading_time }} min read</span>
+    </div>
+
+    <h3 class="fp-card-title mb-2">
+      <a href="{{ url_for('posts.detail', slug=post.slug) }}">{{ post.title }}</a>
+    </h3>
+
+    <p class="fp-card-excerpt mb-3 flex-grow-1">{{ post.description }}</p>
+
+    {% if post.tags %}
+      <div class="d-flex flex-wrap gap-2 mb-3">
+        {% for tag in post.tags[:3] %}
+          <a href="{{ url_for('main.index', tag=tag.slug) }}" class="fp-tag-link">#{{ tag.name }}</a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="pt-3 border-top d-flex align-items-center justify-content-between gap-2">
+      <a
+        href="{{ url_for('profile.view', username=post.author.username) }}"
+        class="d-inline-flex align-items-center gap-2 text-decoration-none text-dark min-w-0"
+      >
+        <span class="fp-avatar">{{ post.author.initials }}</span>
+        <span class="small fw-medium text-truncate">{{ post.author.full_name }}</span>
+      </a>
+      <span class="small text-muted tabular-nums text-nowrap">
+        <i class="bi bi-chat-left-text me-1"></i>{{ post.comments|length }}
+      </span>
+    </div>
+  </div>
+</article>
